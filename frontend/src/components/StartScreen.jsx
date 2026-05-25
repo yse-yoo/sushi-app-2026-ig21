@@ -7,6 +7,7 @@ export default function StartScreen({ onSeatChange, onStart, seatId, seats }) {
         <section className="w-full max-w-2xl rounded-[32px] border border-slate-200 bg-white p-8 text-center shadow-[0_24px_60px_rgba(32,76,112,0.12)] max-sm:p-6">
           <div className="text-[0.72rem] font-bold uppercase tracking-[0.18em] text-sky-700">
             {/* TODO: /images/site_logo.png を表示 */}
+            <img src="/images/site_logo.png" alt="Site Logo" />
           </div>
 
           <SeatSelect seatId={seatId} seats={seats} onSeatChange={onSeatChange} />

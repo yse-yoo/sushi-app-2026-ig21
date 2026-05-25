@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API ルーティング一覧 — SalonSync</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Fraunces:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161922;
+    --panel-2: #1c2030;
+    --border: #2a2f42;
+    --text: #e6e8ee;
+    --muted: #8b91a7;
+    --accent: #7dd3fc;
+    --get: #34d399;
+    --post: #f59e0b;
+    --warn: #f87171;
+    --ok: #4ade80;
+  }
+  body {
+    font-family: 'Noto Sans JP', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(125,211,252,0.08), transparent 40%),
+      radial-gradient(circle at 90% 30%, rgba(167,139,250,0.06), transparent 40%);
+    background-attachment: fixed;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .display { font-family: 'Fraunces', serif; letter-spacing: -0.02em; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+  }
+  .method-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+  .method-get { background: rgba(52,211,153,0.15); color: var(--get); border: 1px solid rgba(52,211,153,0.3); }
+  .method-post { background: rgba(245,158,11,0.15); color: var(--post); border: 1px solid rgba(245,158,11,0.3); }
+  .method-both { background: rgba(125,211,252,0.15); color: var(--accent); border: 1px solid rgba(125,211,252,0.3); }
+  .status-ok { color: var(--ok); }
+  .status-warn { color: var(--warn); }
+  .status-na { color: var(--muted); }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; }
+  th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(42,47,66,0.5);
+    font-size: 0.875rem;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(125,211,252,0.03); }
+  .section-marker {
+    display: inline-block;
+    width: 4px;
+    height: 1.5rem;
+    background: var(--accent);
+    margin-right: 12px;
+    vertical-align: middle;
+    border-radius: 2px;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(125,211,252,0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #cbd5e1;
+  }
+  .fix-card {
+    background: var(--panel-2);
+    border-left: 3px solid var(--warn);
+    padding: 16px 20px;
+    border-radius: 4px;
+  }
+  .fix-card.info {
+    border-left-color: var(--muted);
+  }
+  .diff-old { color: #fca5a5; text-decoration: line-through; opacity: 0.7; }
+  .diff-new { color: #86efac; }
+  .toc-link {
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+  .toc-link:hover { color: var(--accent); }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="max-w-6xl mx-auto px-6 py-12">
+
+  <!-- Header -->
+  <header class="mb-16">
+    <div class="mono text-xs text-[color:var(--muted)] mb-3 tracking-widest">SALONSYNC / BACKEND</div>
+    <h1 class="display text-5xl md:text-6xl font-extrabold mb-4">API ルーティング一覧</h1>
+    <p class="text-[color:var(--muted)] max-w-2xl leading-relaxed">
+      Laravel 11 ベースのバックエンドエンドポイントと、フロントエンドからの呼び出し対応状況をまとめたリファレンス。
+    </p>
+
+    <!-- TOC -->
+    <nav class="mt-8 flex flex-wrap gap-x-6 gap-y-2 mono text-sm">
+      <a href="#api" class="toc-link">→ /api/*</a>
+      <a href="#admin" class="toc-link">→ /admin/*</a>
+      <a href="#frontend" class="toc-link">→ フロントエンド対応表</a>
+      <a href="#fixes" class="toc-link">→ 要対応箇所</a>
+    </nav>
+  </header>
+
+  <!-- /api/* セクション -->
+  <section id="api" class="mb-16">
+    <h2 class="display text-2xl font-bold mb-2 flex items-center">
+      <span class="section-marker"></span>
+      <span class="mono text-lg text-[color:var(--accent)]">/api/*</span>
+    </h2>
+    <p class="text-[color:var(--muted)] text-sm mb-6 ml-4">フロントエンド向け REST API</p>
+
+    <div class="panel rounded-lg overflow-hidden overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th class="w-24">メソッド</th>
+            <th>エンドポイント</th>
+            <th>コントローラー</th>
+            <th>アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/category/fetch</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/product/fetch</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/seat/fetch</td><td class="mono text-[color:var(--muted)]">SeatController</td><td class="mono">index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/seat/available</td><td class="mono text-[color:var(--muted)]">SeatController</td><td class="mono">available</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/seat/find</td><td class="mono text-[color:var(--muted)]">SeatController</td><td class="mono">show</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/visit/find</td><td class="mono text-[color:var(--muted)]">VisitController</td><td class="mono">show</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/api/visit/join</td><td class="mono text-[color:var(--muted)]">VisitController</td><td class="mono">join</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/api/order/fetch</td><td class="mono text-[color:var(--muted)]">OrderController</td><td class="mono">index</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/api/order/add</td><td class="mono text-[color:var(--muted)]">OrderController</td><td class="mono">store</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/api/order/billed</td><td class="mono text-[color:var(--muted)]">OrderController</td><td class="mono">bill</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- /admin/* セクション -->
+  <section id="admin" class="mb-16">
+    <h2 class="display text-2xl font-bold mb-2 flex items-center">
+      <span class="section-marker"></span>
+      <span class="mono text-lg text-[color:var(--accent)]">/admin/*</span>
+    </h2>
+    <p class="text-[color:var(--muted)] text-sm mb-6 ml-4">管理画面 Web ルート</p>
+
+    <div class="panel rounded-lg overflow-hidden overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th class="w-28">メソッド</th>
+            <th>エンドポイント</th>
+            <th>コントローラー</th>
+            <th>アクション</th>
+            <th>ルート名</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/</td><td class="text-[color:var(--muted)]">—</td><td class="mono">welcome view</td><td class="text-[color:var(--muted)]">—</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin</td><td class="mono text-[color:var(--muted)]">DashboardController</td><td class="mono">index</td><td class="mono text-xs">admin.dashboard</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/category</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">index</td><td class="mono text-xs">admin.category.index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/category/create</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">create</td><td class="mono text-xs">admin.category.create</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/category</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">store</td><td class="mono text-xs">admin.category.store</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/category/edit/{category}</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">edit</td><td class="mono text-xs">admin.category.edit</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/category/update/{category}</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">update</td><td class="mono text-xs">admin.category.update</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/category/delete/{category}</td><td class="mono text-[color:var(--muted)]">CategoryController</td><td class="mono">destroy</td><td class="mono text-xs">admin.category.destroy</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/product</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">index</td><td class="mono text-xs">admin.product.index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/product/create</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">create</td><td class="mono text-xs">admin.product.create</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/product/store</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">store</td><td class="mono text-xs">admin.product.store</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/product/edit/{product}</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">edit</td><td class="mono text-xs">admin.product.edit</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/product/update/{product}</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">update</td><td class="mono text-xs">admin.product.update</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/product/delete/{product}</td><td class="mono text-[color:var(--muted)]">ProductController</td><td class="mono">destroy</td><td class="mono text-xs">admin.product.destroy</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/seat</td><td class="mono text-[color:var(--muted)]">SeatController</td><td class="mono">index</td><td class="mono text-xs">admin.seat.index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/seat/edit/{seat}</td><td class="mono text-[color:var(--muted)]">SeatController</td><td class="mono">edit</td><td class="mono text-xs">admin.seat.edit</td></tr>
+          <tr><td><span class="method-badge method-post">POST</span></td><td class="mono">/admin/seat/update/{seat}</td><td class="mono text-[color:var(--muted)]">SeatController</td><td class="mono">update</td><td class="mono text-xs">admin.seat.update</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/visit</td><td class="mono text-[color:var(--muted)]">VisitController</td><td class="mono">index</td><td class="mono text-xs">admin.visit.index</td></tr>
+          <tr><td><span class="method-badge method-get">GET</span></td><td class="mono">/admin/visit/show/{visit}</td><td class="mono text-[color:var(--muted)]">VisitController</td><td class="mono">show</td><td class="mono text-xs">admin.visit.show</td></tr>
+          <tr><td><span class="method-badge method-both">GET/POST</span></td><td class="mono">/admin/database</td><td class="mono text-[color:var(--muted)]">DatabaseController</td><td class="mono">index</td><td class="mono text-xs">admin.database</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- フロントエンド対応表 -->
+  <section id="frontend" class="mb-16">
+    <h2 class="display text-2xl font-bold mb-2 flex items-center">
+      <span class="section-marker"></span>
+      フロントエンド fetch 対応表
+    </h2>
+    <p class="text-[color:var(--muted)] text-sm mb-6 ml-4">サービスファイルからの呼び出し状況</p>
+
+    <div class="panel rounded-lg overflow-hidden overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th class="w-24">メソッド</th>
+            <th>エンドポイント</th>
+            <th>サービスファイル</th>
+            <th>関数名</th>
+            <th>実装状態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/category/fetch</td>
+            <td class="mono text-[color:var(--muted)]">categoryService.js</td>
+            <td class="mono">loadCategories()</td>
+            <td class="status-warn">⚠ 実行時エラー（response 未定義）</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/product/fetch</td>
+            <td class="mono text-[color:var(--muted)]">productService.js</td>
+            <td class="mono">loadProducts(categoryId)</td>
+            <td class="status-ok">✓ 実装済み</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/seat/fetch</td>
+            <td class="mono text-[color:var(--muted)]">seatService.js</td>
+            <td class="mono">loadSeats(...)</td>
+            <td class="status-ok">✓ 実装済み</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/seat/available</td>
+            <td class="text-[color:var(--muted)]">—</td>
+            <td class="text-[color:var(--muted)]">—</td>
+            <td class="status-na">— フロントエンド未実装</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/seat/find</td>
+            <td class="text-[color:var(--muted)]">—</td>
+            <td class="text-[color:var(--muted)]">—</td>
+            <td class="status-na">— フロントエンド未実装</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/visit/find</td>
+            <td class="mono text-[color:var(--muted)]">visitService.js</td>
+            <td class="mono">findVisitById(visitId)</td>
+            <td class="status-ok">✓ 実装済み</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-post">POST</span></td>
+            <td class="mono">/api/visit/join</td>
+            <td class="mono text-[color:var(--muted)]">visitService.js</td>
+            <td class="mono">joinVisit(seatId)</td>
+            <td class="status-ok">✓ 実装済み</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-get">GET</span></td>
+            <td class="mono">/api/order/fetch</td>
+            <td class="mono text-[color:var(--muted)]">orderService.js</td>
+            <td class="mono">loadOrders(visitId)</td>
+            <td class="status-ok">✓ 実装済み</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-post">POST</span></td>
+            <td class="mono">/api/order/add</td>
+            <td class="mono text-[color:var(--muted)]">orderService.js</td>
+            <td class="mono">submitOrder(...)</td>
+            <td class="status-warn">⚠ 未完成（URL・method・body 未設定）</td>
+          </tr>
+          <tr>
+            <td><span class="method-badge method-post">POST</span></td>
+            <td class="mono">/api/order/billed</td>
+            <td class="mono text-[color:var(--muted)]">orderService.js</td>
+            <td class="mono">checkoutOrder(visitId)</td>
+            <td class="status-ok">✓ 実装済み</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 要対応箇所 -->
+  <section id="fixes" class="mb-16">
+    <h2 class="display text-2xl font-bold mb-6 flex items-center">
+      <span class="section-marker"></span>
+      要対応箇所
+    </h2>
+
+    <div class="space-y-5">
+      <!-- Fix 1 -->
+      <div class="fix-card rounded">
+        <div class="flex items-baseline gap-3 mb-3">
+          <span class="mono text-xs text-[color:var(--warn)]">FIX 01</span>
+          <h3 class="font-bold">
+            <code>categoryService.js</code> — <code>loadCategories()</code>
+          </h3>
+        </div>
+        <p class="text-sm text-[color:var(--muted)] leading-relaxed ml-12">
+          <code>fetch(url, options)</code> と <code>response.json()</code> がコメントアウトされており、<code>response</code> 変数が未定義のまま参照されるため実行時エラーになる。
+        </p>
+      </div>
+
+      <!-- Fix 2 -->
+      <div class="fix-card rounded">
+        <div class="flex items-baseline gap-3 mb-3">
+          <span class="mono text-xs text-[color:var(--warn)]">FIX 02</span>
+          <h3 class="font-bold">
+            <code>orderService.js</code> — <code>submitOrder()</code>
+          </h3>
+        </div>
+        <div class="ml-12 space-y-2 mono text-xs">
+          <div>
+            <span class="text-[color:var(--muted)]">URL:</span>
+            <span class="diff-old">${apiBaseUrl}</span>
+            →
+            <span class="diff-new">${apiBaseUrl}/api/order/add</span>
+          </div>
+          <div>
+            <span class="text-[color:var(--muted)]">method:</span>
+            <span class="diff-old">''</span>
+            →
+            <span class="diff-new">'POST'</span>
+          </div>
+          <div>
+            <span class="text-[color:var(--muted)]">headers:</span>
+            <span class="diff-old">{ 'Content-Type': '' }</span>
+            →
+            <span class="diff-new">{ 'Content-Type': 'application/json' }</span>
+          </div>
+          <div>
+            <span class="text-[color:var(--muted)]">body:</span>
+            <span class="diff-old">JSON.stringify()</span>
+            →
+            <span class="diff-new">JSON.stringify({ product_id: productId, quantity, visit_id: Number(visitId) })</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fix 3 -->
+      <div class="fix-card info rounded">
+        <div class="flex items-baseline gap-3 mb-3">
+          <span class="mono text-xs text-[color:var(--muted)]">INFO 03</span>
+          <h3 class="font-bold">
+            <code>/api/seat/available</code> ・ <code>/api/seat/find</code>
+          </h3>
+        </div>
+        <p class="text-sm text-[color:var(--muted)] leading-relaxed ml-12">
+          バックエンドにルートは存在するが、フロントエンドの対応サービス関数がない（現時点では未使用）。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="pt-8 border-t border-[color:var(--border)] mono text-xs text-[color:var(--muted)] flex flex-wrap justify-between gap-2">
+    <span>SalonSync API Reference</span>
+    <span>Laravel 11 / React + ky</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
