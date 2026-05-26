@@ -27,16 +27,20 @@ export async function loadOrders(visitId, options = {}) {
 export async function submitOrder(visitId, product, quantity, options = {}) {
   const productId = Number(product.id);
   // TODO: エンドポイント: api/order/add
-  const url = `${apiBaseUrl}`;
+  const url = `${apiBaseUrl}/api/order/add`;
   // TODO: Fetch API で注文データを送信
   // 1. method: POST
   // 2. headers: 'Content-Type': 'application/json'
-  // 3. body: JSON　で { product_id, quantity, visit_id }
+  // 3. body: JSON　で { productId, quantity, visit_id }
   const response = await fetch(url, {
     ...options,
-    method: '',
-    headers: { 'Content-Type': '', ...(options.headers ?? {}) },
-    body: JSON.stringify(),
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(options.headers ?? {}) },
+    body: JSON.stringify({
+      product_id: productId,
+      quantity: quantity,
+      visit_id: visitId
+    }),
   });
   // レスポンスの JSON をパースして、payload 変数に格納
   const payload = await response.json().catch(() => ({}));
