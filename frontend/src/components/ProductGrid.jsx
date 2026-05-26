@@ -20,7 +20,12 @@ export default function ProductGrid({ disabled, loading, products, onSelectProdu
         {products.map((product) => (
           // TODO: ProductCard コンポーネントを使用して、商品を表示
           // Props: key, disabled, product, onSelectProduct
-          <div>ProductCard コンポーネントを表示</div>
+          <ProductCard
+            key={product.id}
+            disabled={disabled}
+            product={product}
+            onSelectProduct={onSelectProduct}
+          />
         ))}
       </div>
     </>
