@@ -3,7 +3,7 @@ import { formatPrice } from '../utils/formatPrice';
 
 export default function OrderItemCard({ order }) {
   // TODO: 小計を計算: 単価 × 数量
-  const totalPrice = 0;
+  const totalPrice = order.price * order.quantity;
   return (
     <article className="flex items-center justify-between gap-3 rounded-[20px] p-3">
       {order.product_image_path ? (
