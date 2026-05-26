@@ -40,7 +40,11 @@ export default function OrderingPage() {
           <div className="rounded-[28px] border border-slate-200 bg-white p-[22px]">
             {/* TODO: CategoryTabs を表示 */}
             {/* props: categories, selectedCategory, onChange */}
-            CategoryTabs コンポーネントを表示
+            <CategoryTabs
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onChange={handleCategoryChange}
+            />
 
             <ProductGrid
               loading={isProductsLoading}
