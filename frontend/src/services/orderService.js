@@ -7,7 +7,7 @@ export async function loadOrders(visitId, options = {}) {
   }
 
   // TODO: エンドポイント: api/order/fetch?visit_id={visitId}
-  let url = `${apiBaseUrl}`;
+  let url = `${apiBaseUrl}/api/order/fetch`;
   // クエリパラメータを URL に追加
   url += `?visit_id=${encodeURIComponent(String(visitId))}`;
 
