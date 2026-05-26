@@ -9,7 +9,7 @@ export function playThanksVoice() {
   const selectedFile = voiceFiles[Math.floor(Math.random() * voiceFiles.length)];
 
   // TODO: Audio オブジェクトを作成して再生
-  // const audio = new Audio(selectedFile);
-  // audio.play();
+  const audio = new Audio(selectedFile);
+  audio.play();
 
 }
